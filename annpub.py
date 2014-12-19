@@ -13,7 +13,7 @@ target = "sftp -o IdentityFile=~/.ssh/id_rsa -P " + port + " " + username + "@" 
 
 
 
-def pubapp(topic):
+def pubapp(topic, exp):
     sftp = subprocess.Popen(target, shell=False, stdin=subprocess.PIPE)
     sftp.stdin.write(bytes("cd /var/www/html/api/announcement/ \n", "UTF-8"))
     sftp.stdin.write(bytes("get announcement.xml announcement.xml \n", "UTF-8"))
@@ -22,7 +22,7 @@ def pubapp(topic):
     sftp.stdin.close()
 
     rss.rsscreate(date, topic)
-    makejson.create(date, topic)
+    makejson.create(date, topic, exp)
 
 
     sftp = subprocess.Popen(target, shell=False, stdin=subprocess.PIPE)
