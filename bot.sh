@@ -5,7 +5,6 @@ input=".bot.cfg"
 echo "Starting session: $(date "+[%y:%m:%d %T]")">$log 
 echo "NICK $nick" > $input 
 echo "USER $user" >> $input
-TOPIC=$1
 
 tail -f $input | telnet $server 6667 | while read res
 do
@@ -19,10 +18,12 @@ do
     ;;
     # for pings on nick/user
     *"005"*)
+	  echo "PRIVMSG NickServ :IDENTIFY $password" >> $input
       echo "JOIN #$channel" >> $input
 	  sleep 3
-	  echo "TOPIC #$channel :$TOPIC" >> $input
-	  echo "QUIT :Topic set. Goodbye." >> $input
+	  while true; do
+	    inotifywait -r -e close_write,create ./announcement && TOPIC=$(cat ./announcement/announcement.txt) && echo "TOPIC #$channel :$TOPIC" >> $input
+	    done
     ;;
     *)
     ;;
