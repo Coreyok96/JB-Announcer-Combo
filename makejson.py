@@ -13,7 +13,10 @@ def format(date, exp, pri, announcement):
     filew.write('}\n')
 
 def create(day, topic, exp, pri, exptime):
-    expiry = str(exp) + ' ' + exptime
+    if exptime == 'never':
+        expiry = exptime
+    else:
+        expiry = str(exp) + 'T' + exptime
 
     if os.path.isfile('announcement.json'):
         text = open('announcement.json', 'r')

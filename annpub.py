@@ -5,7 +5,7 @@ import rss
 import makejson
 
 now = datetime.datetime.now()
-date = str(now.day) + "/" + str(now.month) + "/" + str(now.year)
+date = str(now.year) + "-" + str(now.month) + "-" + str(now.day)
 
 host = '10.0.0.187'
 port = '22'
@@ -17,7 +17,6 @@ def turngmt():
     global expiretime
     if time.localtime().tm_isdst == 0:
         a = int(expiretime[:2]) + int(time.timezone / 60 / 60)
-        print(a)
 
     else:
         a = int(expiretime[:2]) + int(time.altzone / 60 / 60)
@@ -25,15 +24,21 @@ def turngmt():
 def addday():
     global expire
     global gmtexp
-    turngmt()
-    if a >= 24:
-        expire += 1
-        gmtexp = a - 24
+    if expiretime == '':
+        gmtexp = "never"
     else:
-        gmtexp = a
-    if gmtexp < 10:
-        gmtexp = '0' + str(gmtexp)
-    gmtexp += expiretime[2:4]
+        turngmt()
+        if a >= 24:
+            expire += 1
+            gmtexp = a - 24
+        else:
+            gmtexp = a
+            if gmtexp < 10:
+                gmtexp = '0' + str(gmtexp)
+            else:
+                gmtexp = str(gmtexp)
+
+            gmtexp += ':' + expiretime[2:4] + ':00Z'
 
 def pubapp(topic, exp, pri, exptime):
     global expire

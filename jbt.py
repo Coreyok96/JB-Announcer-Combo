@@ -5,34 +5,35 @@ from calendar import monthrange
 import datetime
 
 now = datetime.datetime.now()
+date = str(now.month) + "/" + str(now.day) + "/" + str(now.year)
 days = monthrange(now.year, now.month)
 
-def finddays():
+def finddate():
     global expire
-    today = datetime.date(now.year, now.month, now.day)
-    expdate = datetime.date(yyyy, mm, dd)
-    delta = expdate - today
-    expire = delta.days
+    if addays == "never":
+        expire = "never"
+    else:
+        currentdate = datetime.date(year=int(date[6:10]), month=int(date[:2]), day=int(date[3:5]))
+        enddate = currentdate + datetime.timedelta(days=addays)
+        expire = str(enddate.year) + '-' + str(enddate.month) + '-' + str(enddate.day)
 
 def settop():
     global expire
     global entryexp
     try:
-        expire
+        if expire == "never":
+            time = ''
     except NameError:
-        global yyyy
-        global mm
-        global dd
-        expire = entryexp.get()
-        yyyy = int(expire[6:10])
-        mm = int(expire[0:2])
-        dd = int(expire[3:5])
-        time = expire[11:15]
-        finddays()
+        rawexpire = entryexp.get()
+        yy = int(rawexpire[6:10])
+        mm = int(rawexpire[:2])
+        dd = int(rawexpire[3:5])
+        expire = datetime.date(year=yy, month=mm, day=dd)
+        time = rawexpire[11:]
     try:
         time
     except NameError:
-        time = 0000
+        time = '0000'
     try:
         priority
     except NameError:
@@ -51,29 +52,34 @@ def pricommand():
     pri.menu.add_command(label="0", command=zero)
 
 def day():
-    global expire
+    global addays
     exp.configure(text='1 day')
-    expire = 1
+    addays = 1
+    finddate()
 
 def week():
-    global expire
+    global addays
     exp.configure(text='1 week')
-    expire = 7
+    addays = 7
+    finddate()
 
 def fortnight():
-    global expire
+    global addays
     exp.configure(text='1 fortnight')
-    expire = 14
+    addays = 14
+    finddate()
 
 def month():
-    global expire
+    global addays
     exp.configure(text='1 month')
-    expire = days[1]
+    addays = days[1]
+    finddate()
 
 def never():
-    global expire
+    global addays
     exp.configure(text='Never')
-    expire = 'never'
+    addays = 'never'
+    finddate()
 
 def options():
     global entryexp
